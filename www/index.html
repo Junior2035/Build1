@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the 
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src *; script-src * 'unsafe-eval' 'unsafe-inline'; connect-src *; img-src *; style-src * 'unsafe-inline' ; media-src *">  
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' gap:; style-src 'self' 'unsafe-inline'; media-src *" />
+    <!-- Good default declaration:
+    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+        * Enable eval(): add 'unsafe-eval' to default-src
+    * Create your own at http://cspisawesome.com
+    -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+
+    <title>Hello World</title>
+      <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css"/>
+    
+<script src="js/jquery.js"></script>
+<script src="js/jquery.mobile-1.4.5.js"></script>
+<script src="js/pureknob.js" type="text/javascript"></script>
+    
+<script type="text/javascript">
+var x=0;
+var imgurl='img/Globe_Disconnect.png';
+var Ntester='';
+var knob = pureknob.createKnob(250, 250);
+
+
+setInterval(xid,5000);
+function xid(){
+
+	var xhr = new XMLHttpRequest();
+xhr.open("GET", "http://digisofttechnologies.6te.net/index.php?name=kean", true);
+xhr.timeout = 5000;
+xhr.onload = function() {
+  //alert(xhr.responseText);
+ Ntester="System Online";
+ x=xhr.status;
+};
+xhr.ontimeout = function (e) {
+Ntester="System Offline";
+};
+xhr.send();
+//document.writeln(x); 
+var sc1 =document.getElementById('nh');
+if(x==200){
+	imgurl='img/Globe_Connected.png';}
+else{
+	imgurl='img/Globe_Disconnect.png';}
+sc1.innerHTML='<img name="nconnect" src="'+imgurl+'" width="53" height="50" alt="">';
+
+x=0;
+}
+
+
+function login(){
+var usernamex=document.login_form.username.value;
+var passwordx=document.login_form.password.value;
+var netcon=document.getElementById('nh');
+var queryString="? password="+passwordx;
+queryString+="&username="+usernamex;
+if(imgurl=='img/Globe_Connected.png')
+{
+	if(usernamex==''){
+	alert('Please Enter your username');}
+	else if(passwordx==''){
+		alert('Please Enter the password');}
+	else{
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", "http://digisofttechnologies.6te.net/resource_files/login.php"+queryString, true);
+			xhr.onload = function() {
+			  if(xhr.responseText=='success'){
+				  window.location.replace(href="#bar");}
+			};
+			xhr.send();
+	}
+}
+else{
+	alert('No iternet connection');}
+}
+
+
+function demoKnob() {
+				// Create knob element, 300 x 300 px in size.
+				
+				
+				// Set properties.
+				knob.setProperty('angleStart', -0.75 * Math.PI);
+				knob.setProperty('angleEnd', 0.75 * Math.PI);
+				knob.setProperty('colorFG', '#0000CC');
+				knob.setProperty('trackWidth', 0.4);
+				knob.setProperty('valMin', 0);
+				knob.setProperty('valMax', 100);
+				
+				// Set initial value.
+				knob.setValue(1);
+				
+				/*
+				 * Event listener.
+				 *
+				 * Parameter 'knob' is the knob object which was
+				 * actuated. Allows you to associate data with
+				 * it to discern which of your knobs was actuated.
+				 *
+				 * Parameter 'value' is the value which was set
+				 * by the user.
+				 */
+				var listener = function(knob, value) {
+					console.log(value);
+				};
+				
+				knob.addListener(listener);
+				
+				// Create element node.
+				var node = knob.node();
+				
+				// Add it to the DOM.
+				var elem = document.getElementById('gauge');
+				elem.appendChild(node);
+			}
+			function ready() {
+				demoKnob();
+			}
+
+			document.addEventListener('DOMContentLoaded', ready, false);
+			
+			function settemperature(){
+				var xhr = new XMLHttpRequest();
+xhr.open("GET", "http://digisofttechnologies.6te.net/resource_files/temp_sensor_data.php", true);
+xhr.onload = function () {
+  // alert(xhr.responseText);
+  knob.setValue(xhr.responseText);
+};
+xhr.send();
+			}
+setInterval(settemperature,5000)
+</script>
+</head>
+
+<body>
+
+<!-- Start of first page -->
+<div data-role="page" id="foo">
+
+	<div data-role="header" id="nh" align="right">
+		<img name="nconnect" src="img/Globe_Disconnect.png" width="53" height="50" alt="">
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content" align="center">
+	  <form name="login_form">
+	    <p>
+	      <label for="usern">Username</label>
+	      <input type="text" name="username" id="usern">
+	    </p>
+	    <p>
+	      <label for="pwd">Password</label>
+	      <input type="text" name="password" id="pwd">
+	    </p>
+	    <p>
+	      <input type="button" onclick= "login()" value="Login"/>
+	    </p>
+	    <p>&nbsp;</p>
+      </form>
+		
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed">
+		<h4>Page Footer</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+
+<!-- Start of second page -->
+<div data-role="page" id="bar">
+
+	<div data-role="header">
+		<a href="#foo" class=" ui-btn">@</a>
+        <h1>Bar</h1>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content" align="center">
+		<table width="200" border="0" cellspacing="10">
+		  <tr>
+		    <td width="70"><a href="#page3"><img src="img/leaf.png" width="70" height="70"></a></td>
+		    <td width="93"><a href="#page3"><img src="img/intranet.png" width="70" height="70"></a></td>
+		    <td width="15"><a href="#page3"><img src="img/designFloat.png" width="70" height="70"></a></td>
+	      </tr>
+		  <tr>
+		    <td><a href="#page3"><img src="img/Apps-utilities-terminal-icon.png" width="70" height="70"></a></td>
+		    <td><a href="#page3"><img src="img/Apps-libreoffice-calc-icon.png" width="70" height="70"></a></td>
+		    <td><a href="#page3"><img src="img/Apps-libreoffice-base-icon.png" width="70" height="70"></a></td>
+	      </tr>
+		  <tr>
+		    <td><a href="#page3"><img src="img/Apps-gnome-display-properties-icon.png" width="70" height="70"></a></td>
+		    <td><a href="#page3"><img src="img/Admin-icon.png" width="70" height="70"></a></td>
+		    <td><a href="#page3"><img src="img/2-Developer-icon.png" width="70" height="70"></a></td>
+	      </tr>
+		  <tr>
+		    <td><a href="#page3"><img src="img/settings-icon_004.png" width="70" height="70"></a></td>
+		    <td><a href="#page3"><img src="img/network-driver-connected.png" width="70" height="70"></a></td>
+		    
+	      </tr>
+		  
+	  </table>
+		<p>&nbsp;</p>
+		
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed">
+		<h4>Page Footer</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+
+<div data-role="page" id="page3">
+
+	<div data-role="header">
+		<h1>Page3</h1>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content" id="gauge" align="center">
+		
+		<a href="#bar" class=" ui-btn">Back to Menu</a>
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed">
+		<h4>Page Footer</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+</body>
+
+</html>
